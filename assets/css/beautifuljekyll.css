@@ -35,9 +35,11 @@ h1 {
 }
 h2 {
   font-size: 1.875rem;
+  border-bottom: 2px #e1e4e8 solid
 }
 h3 {
   font-size: 1.5rem;
+  margin-bottom: -20px;
 }
 h4 {
   font-size: 1.125rem;
@@ -1093,4 +1095,21 @@ pre {
   #nav-search-text {
     display: inline-block;
   }
+}
+
+/* Figure and caption */
+
+.article .figure {
+  border-top: 1px solid hsla(0, 0%, 0%, 0.2);
+  border-bottom: 1px solid hsla(0, 0%, 0%, 0.2);
+  padding: 20px 0;
+}
+.article .figure .caption {
+  padding-top: 15px;
+  display: inline-block;
+  font-size: 13px;
+  line-height: 1.2em;
+}
+.article .figure .caption-label {
+  font-weight: bold;
 }
