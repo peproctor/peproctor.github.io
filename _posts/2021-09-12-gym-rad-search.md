@@ -2,12 +2,12 @@
 layout: post
 title: Radiation Source Search Gym Environment
 thumbnail-img: /assets/img/rad-post/rad_robot.png
-share-img: /assets/img/path.jpg
+share-img: /assets/img/rad-post/rad_robot.png
 comments: true
 cover-img:
     - "/assets/img/rad-post/nuc-in-tower.jpg" : "Jakob Madsen (2017)"
 ---
-This is the first in a series of posts detailing the application of deep reinforcement learning to radiation source search.
+This is the first in a series of posts detailing the application of deep reinforcement learning to radiation source search. In this post, we will cover the basics of the nuclear source search task and how we modeled our reinforcement learning environment.
 
 ## Context
 
