@@ -1,8 +1,8 @@
 ---
 layout: post
 title: A Brief Overview of On-policy Reinforcement Learning Theory
-thumbnail-img: /assets/img/rad-post/rad_robot.png
-share-img: /assets/img/rad-post/rad_robot.png
+thumbnail-img: /assets/img/rad-post/rew-surf-plot.jpg
+share-img: /assets/img/rad-post/rew-surf-plot.jpg
 comments: true
 cover-img:
     - "/assets/img/rad-post/nuc-sign.jpg" : "Dan Meyers (2019)"

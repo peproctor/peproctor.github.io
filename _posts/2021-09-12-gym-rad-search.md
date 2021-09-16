@@ -7,7 +7,7 @@ comments: true
 cover-img:
     - "/assets/img/rad-post/nuc-in-tower.jpg" : "Jakob Madsen (2017)"
 ---
-This is the first in a series of posts detailing the application of deep reinforcement learning to radiation source search. In this post, we will cover the basics of the nuclear source search task and how we modeled our reinforcement learning environment.
+This is the first in a series of posts detailing the application of deep reinforcement learning to radiation source search. In this post, we will cover the basics of the nuclear source search task and how we modeled our reinforcement learning environment. Code for the radiation search environment is found [here.](https://github.com/peproctor/radiation_ppo)
 
 ## Context
 
@@ -121,7 +121,7 @@ The reward function was designed to provide greater feedback for the quality of 
 
 ## Conclusion
 Radiation source search is a challenging task due to the high variability of the environments being operated in.
-Many solutions have been proposed for nuclear source search and localization across a broad range of scenarios and radiation sensor modalities. These methods are generally limited to the assumptions made about the problem such as the background rate, mobility of the source, shielding presence, and knowledge of obstruction layout and composition. In the next post, we will cover the basic theory of the deep reinforcement learning technique known as advantage actor critic and then delve into how we successfully applied it in radiation source search.
+Many solutions have been proposed for nuclear source search and localization across a broad range of scenarios and radiation sensor modalities. These methods are generally limited to the assumptions made about the problem such as the background rate, mobility of the source, shielding presence, and knowledge of obstruction layout and composition. In the next post, we will cover the basic theory of policy gradients and the deep reinforcement learning technique known as advantage actor critic.
 
 <br>
 {% bibliography --cited %}
