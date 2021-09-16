@@ -24,7 +24,7 @@
         <title>Radiation Source Search Gym Environment</title>
         <description>
           
-          This is the first in a series of posts detailing the application of deep reinforcement learning to radiation source search. In this post, we will cover the basics of the nuclear source search task and how we modeled our reinforcement learning environment. Context The advancement of nuclear technology has brought...
+          This is the first in a series of posts detailing the application of deep reinforcement learning to radiation source search. In this post, we will cover the basics of the nuclear source search task and how we modeled our reinforcement learning environment. Code for the radiation search environment is found...
         </description>
         <pubDate>Sun, 12 Sep 2021 00:00:00 -0400</pubDate>
         <link>/2021-09-12-gym-rad-search/</link>
