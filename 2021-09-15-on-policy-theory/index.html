@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- Beautiful Jekyll 5.0.0 | Copyright Dean Attali 2020 -->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  
+
+  
+
+  <title>A Brief Overview of On-policy Reinforcement Learning Theory</title>
+
+  
+  <meta name="author" content="Philippe Proctor">
+  
+
+  <meta name="description" content="This is the second in a series of posts detailing the application of deep reinforcement learning to radiation source search. In this post, we will cover the theory and basics of reinforcement learning, on-policy deep reinforcement learning, the advantage actor critic, and proximal policy optimization. This post will be heavy...">
+
+  
+
+  
+
+  <link rel="alternate" type="application/rss+xml" title="Philippe Proctor" href="/feed.xml">
+
+  
+
+  
+
+  
+
+  
+
+
+  
+    
+      
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+
+    
+      
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
+
+
+    
+      
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic">
+
+
+    
+      
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800">
+
+
+    
+  
+
+  
+    
+      <link rel="stylesheet" href="/assets/css/bootstrap-social.css">
+    
+      <link rel="stylesheet" href="/assets/css/beautifuljekyll.css">
+    
+  
+
+  
+
+  
+  
+  
+
+  
+
+  
+  <meta property="og:site_name" content="Philippe Proctor">
+  <meta property="og:title" content="A Brief Overview of On-policy Reinforcement Learning Theory">
+  <meta property="og:description" content="This is the second in a series of posts detailing the application of deep reinforcement learning to radiation source search. In this post, we will cover the theory and basics of reinforcement learning, on-policy deep reinforcement learning, the advantage actor critic, and proximal policy optimization. This post will be heavy...">
+
+  
+  <meta property="og:image" content="/assets/img/rad-post/rad_robot.png">
+  
+
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:author" content="Philippe Proctor">
+  <meta property="og:article:published_time" content="2021-09-15T00:00:00-04:00">
+  <meta property="og:url" content="/2021-09-15-on-policy-theory/">
+  <link rel="canonical" href="/2021-09-15-on-policy-theory/">
+  
+
+  
+  <meta name="twitter:card" content="summary_large_image">
+  
+  <meta name="twitter:site" content="@">
+  <meta name="twitter:creator" content="@">
+
+  <meta property="twitter:title" content="A Brief Overview of On-policy Reinforcement Learning Theory">
+  <meta property="twitter:description" content="This is the second in a series of posts detailing the application of deep reinforcement learning to radiation source search. In this post, we will cover the theory and basics of reinforcement learning, on-policy deep reinforcement learning, the advantage actor critic, and proximal policy optimization. This post will be heavy...">
+
+  
+  <meta name="twitter:image" content="/assets/img/rad-post/rad_robot.png">
+  
+
+  
+
+
+  
+
+  
+
+</head>
+
+
+<body>
+
+  
+
+
+  <nav class="navbar navbar-expand-xl navbar-light fixed-top navbar-custom top-nav-regular"><a class="navbar-brand navbar-brand-logo" href="https://peproctor.github.io"><img alt="Philippe Proctor Logo" src="/assets/img/profile_oval.png"/></a><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="main-navbar">
+    <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/posts">Posts</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/publications">Publications</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/assets/files/resume-pproctor.pdf">Resume</a>
+          </li></ul>
+  </div>
+
+  
+
+  
+
+</nav>
+
+
+
+
+
+  <!-- TODO this file has become a mess, refactor it -->
+
+
+
+
+
+
+  <div id="header-big-imgs" data-num-img=1
+    
+    
+    
+      
+      data-img-src-1="/assets/img/rad-post/nuc-sign.jpg"
+      data-img-desc-1="Dan Meyers (2019)"
+    
+    
+    
+  ></div>
+
+
+<header class="header-section has-img">
+
+<div class="big-img intro-header">
+  <div class="container-md">
+    <div class="row">
+      <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1">
+        <div class="post-heading">
+          <h1>A Brief Overview of On-policy Reinforcement Learning Theory</h1>
+          
+
+          
+            <span class="post-meta">Posted on September 15, 2021</span>
+            
+            
+          
+        </div>
+      </div>
+    </div>
+  </div>
+  <span class='img-desc'></span>
+</div>
+
+<div class="intro-header no-img">
+  <div class="container-md">
+    <div class="row">
+      <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1">
+        <div class="post-heading">
+          <h1>A Brief Overview of On-policy Reinforcement Learning Theory</h1>
+          
+
+          
+            <span class="post-meta">Posted on September 15, 2021</span>
+            
+            
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</header>
+
+
+
+
+
+<div class=" container-md ">
+  <div class="row">
+    <div class=" col-xl-10 offset-xl-1 col-lg-10 offset-lg-1 ">
+
+      
+
+      
+
+      <article role="main" class="blog-post">
+        <p>This is the second in a series of posts detailing the application of deep reinforcement learning to radiation source search. In this post, we will cover the theory and basics of reinforcement learning, on-policy deep reinforcement learning, the advantage actor critic, and proximal policy optimization. This post will be heavy on the math but should give some intuition about policy gradients. The first post is found <a href="https://peproctor.github.io/2021-09-12-gym-rad-search/">here</a>.</p>
+
+<h2 id="context">Context</h2>
+<p>The aim of <em>reinforcement learning</em> (RL) is to maximize the expectation of cumulative reward over an episode through a policy learned by interaction with the environment. In our work, the policy, \(\pi(a_{n+1}|s_{n})\), is a stochastic mapping from states to actions that does not rely on estimates of the state value as required in methods such as Q-learning. We consider radiation source search to be an episodic task which dictates that the episodes are finite and that the environment and agent are reset according to some initial state distribution after episode completion.</p>
+
+<p>On policy, model-free DRL methods require that the agent learns a policy from its episodic experiences throughout training, whereas model-based methods focus on using a learned or given model to plan action selection. On policy methods are worse in terms of sample efficiency than Q-learning because the learning takes place in an episodic fashion, i.e., the policy is updated on a set of episodes and these episodes are then discarded. The benefit being that the agent directly optimizes policy parameters through the maximization of the reward signal. The decision to use model-free policy gradients was motivated by the stability and ease of hyperparameter tuning during training. Specifically, we used a variant of the <em>advantage actor-critic</em> (A2C) framework called <em>proximal policy optimization</em> (PPO).</p>
+
+<h3 id="reinforcement-learning-preliminaries">Reinforcement Learning Preliminaries</h3>
+<p>The reward starting from any arbitrary time index is defined as,</p>
+
+\[\begin{equation}
+\hat{R}_{n} = \sum_{n'=n}^{N-1}\gamma^{n-n'}r_{n'}.
+\end{equation}\label{eq1}\tag{1}\]
+
+<p>where \(N\) is the length of the episode and \(\gamma \in [0,1)\) is the discount factor. This definition gives clear reward attribution for actions at certain timesteps and the cumulative episode reward results when \(n=0\).</p>
+
+<p>The agent learns a policy from the environment reward signal by updating its value functions. The value function estimates the reward attainable from a given hidden state that gives the agent a notion of the quality of its hidden state <a class="citation" href="#sutton2018rl">(Sutton &amp; Barto, 2018)</a>. This is also a means of judging the quality of a policy, as the value is defined as the expected cumulative reward across the episode when starting from hidden state \(h_{n}\) (will be defined shortly) and acting according to policy \(\pi\) thereafter or more succinctly,</p>
+
+\[\begin{equation}
+V^{\pi}(h_{n}) = \mathbb{E}_{\substack{h_{n+1}:N-1, \\a_{n}:N-1}}[\hat{R}_{n} \vert h_{0} =h_{n}].
+\end{equation}\label{eq2}\tag{2}\]
+
+<p>In the previous <a href="https://peproctor.github.io/2021-09-12-gym-rad-search/">post</a>, we modeled radiation source search as a partially observable Markov decision process where an observation, \(o_{n}\) is generated at every time step \(n\). We define a history as a sequence of observations up to timestep \(n\), that is defined as \(H_{n}=(o_{0},o_{1},...,o_{n-1},o_{n})\). A successful policy needs to consider \(H_{n}\) to inform its decisions since a single observation does not necessarily uniquely identify the current state <a class="citation" href="#spaan2012partially">(Spaan, 2012)</a>. This can be implemented directly by concatenation of all previous observations with the current observation input or through the use of the hidden state, \(h_{n}\), of a <em>recurrent neural network</em> (RNN). The sufficient statistic \(M(H_{n})\) is a function of the past history and serves as the basis for the agent’s decision making <a class="citation" href="#wierstra2010recurrent">(Wierstra et al., 2010)</a>. In our implementation, \(h_{n} = M_{\rho}(H_{n})\), where \(\rho\) denotes a RNN parameterization. This allows the control policy to be conditioned on \(h_{n}\) as \(\pi_{\theta}(a_{n+1} \mid h_{n}) = p(a_{n+1},M_{\rho}(H_{n});\theta)\), where \(p\) is some probability distribution, \(\theta\) is some neural network parameterization, and \(a_{n+1}\) is the next action. The expected return of a policy over a collection of histories is then defined as,</p>
+
+\[\begin{equation}
+J(\pi) = \int_{H}p(H \vert \pi)\hat{R}_{0}(H) \delta H,
+\end{equation}\label{eq3}\tag{3}\]
+
+<p>where \(\hat{R}_{0}(H)\) denotes the cumulative reward for a history \(H\) and \(p(H \vert \pi)\) is the probability of a history occurring given a policy.</p>
+
+<h3 id="policy-gradients-and-the-baseline">Policy Gradients and the Baseline</h3>
+<p>Now that we have a formal objective, we can start thinking about how it can be made amenable to optimization techniques. This is where neural network parameterizations come in. We will denote the policy or actor parameterized by a neural network as, \(\pi_{\theta}\), where \(\theta\) are the network parameters. These parameterizations are amenable to first order optimization methods,</p>
+
+\[\begin{equation}
+\theta_{k+1} \leftarrow \theta_{k} + \alpha \nabla_{\theta}J(\pi_{\theta}) \vert_{\theta_{k}},
+\end{equation}\label{eq4}\tag{4}\]
+
+<p>where \(\alpha\) is the learning rate, \(k\) is the parameter iterate, and the objective is the expected return of the policy. Equation \ref{eq3} can now be rewritten and we can take the gradient with respect to the parameters to yield,</p>
+
+\[\begin{aligned}
+\nabla_{\theta}J(\pi_{\theta}) &amp;= \nabla_{\theta}\int_{H}p(H \vert \pi_{\theta})\hat{R}_{0}(H)dH, \\
+ &amp;= \mathbb{E}_{H}[\nabla_{\theta}\text{log }p(H \vert \pi_{\theta})\hat{R}_{0}(H)], \\
+ &amp;= \mathbb{E}_{H}[\sum_{n=0}^{N-1}\nabla_{\theta}\text{log }\pi_{\theta}(a_{n} \vert h_{n})\hat{R}_{n}]. 
+\end{aligned}\label{eq5}\tag{5}\]
+
+<p>Several steps have been skipped for brevity but further details can be found in <a class="citation" href="#sutton2018rl">(Sutton &amp; Barto, 2018)</a>, <a class="citation" href="#wierstra2010recurrent">(Wierstra et al., 2010)</a>. In practice, the true objective is not readily available and so stochastic estimates are used instead that approximate the true gradient in expectation <a class="citation" href="#sutton2018rl">(Sutton &amp; Barto, 2018)</a>. We can approximate the expectation through the histories collected by our policy \(\pi_{\theta}\) resulting in the unbiased gradient estimator,</p>
+
+\[\begin{equation}
+ \nabla_{\theta}J(\pi_{\theta}) \approx \frac{1}{M}\sum_{m=1}^{\vert M \vert}\sum_{n=0}^{N-1}\nabla_{\theta}\text{log }\pi_{\theta}(a_{n} \vert h_{n}^{m})\hat{R}_{n},
+\end{equation}\label{eq6}\tag{6}\]
+
+<p>where \(\vert \cdot \vert\) is the cardinality operator. By definition, the <a href="https://en.wikipedia.org/wiki/Gradient">gradient</a> of the log probability of the action given the hidden state will be in the direction (in parameter space) that increases the likelihood of that action. Then, we can think of the reward as a scalar component dictating whether to up or down weight the parameters.</p>
+<div class="figure">
+    <img src="/assets/img/rad-post/rew-surf-plot.jpg" style="width: 65%; display: block; margin: 0 auto;" />
+    <div class="caption">
+        <span class="caption-label">Figure 1.</span> Sample of three trajectories plotted over some reward function surface where red corresponds to higher reward and blue corresponds to lower reward. The red square corresponds to the start of the trajectories and the check marks denote the quality of the trajectory where green is the desirable. We want to up-weight the policy parameters that increase the probability of higher reward trajectories occurring and down-weight parameters resulting in lower reward trajectories. This figure was recreated from the following <a href="https://drive.google.com/file/d/0BxXI_RttTZAhY216RTMtanBpUnc/view?resourcekey=0-iVZZsJmzwFvzC1wRDZY1hw">lecture.</a>
+    </div>
+</div>
+<p>A major drawback of the policy gradient approach is the susceptibility to high variance in the gradient estimate due to the computational demand of collecting enough histories to approximate the expectation. Williams proposed the baseline function to reduce the variance of the gradient estimates without adding bias <a class="citation" href="#williams1992simple">(Williams, 1992)</a>. This is represented in the following formula where \(b(h_{n})\) is the baseline function,</p>
+
+\[\begin{equation}
+ \nabla_{\theta}J(\pi_{\theta}) = \mathbb{E}_{H}[\sum_{n=0}^{N-1}\nabla_{\theta}\text{log }\pi_{\theta}(a_{n} \vert h_{n})(\hat{R}_{n}-b(h_{n}))].
+\end{equation}\label{eq7}\tag{7}\]
+
+<p>An illustrative example of the baseline is to consider an environment where the reward signal is only positive and of varying magnitude. Thus, the gradient step will only be increasing the parameter weights, albeit by smaller or larger amounts. If a baseline such as the sample mean of the cumulative reward across histories of an iterate were subtracted, this would result in the smaller cumulative rewards being negative thereby performing down-weighting those parameters.</p>
+
+<h2 id="advantage-actor-critic-a2c-and-proximal-policy-optimization-ppo">Advantage Actor Critic (A2C) and Proximal Policy Optimization (PPO)</h2>
+<h3 id="a2c">A2C</h3>
+<p>In the A2C framework, the baseline function is chosen to be the value function \(V^{\pi}_{\phi}\) as this captures the expected return from a given hidden state following the current policy. It then becomes immediately clear whether the selected action had a positive or negative impact on the cumulative return and the parameters can be adjusted accordingly. This allows modification of Equation \ref{eq7} to use the advantage function as follows from Schulman et al. <a class="citation" href="#schulman2015high">(Schulman et al., 2015)</a>,</p>
+
+\[\begin{aligned}
+\nabla_{\theta}J(\pi_{\theta}) &amp;= \mathbb{E}_{H}[\sum_{n=0}^{N-1}\nabla_{\theta}\text{log }\pi_{\theta}(a_{n} | h_{n})(\hat{R}_{n}-V^{\pi}_{\phi}(h_{n}))] \\
+&amp;= \mathbb{E}_{H}[\sum_{n=0}^{N-1}\nabla_{\theta}\text{log }\pi_{\theta}(a_{n} \vert h_{n})A^{\pi}(h_{n},a_{n})],
+\end{aligned}\label{eq8}\tag{8}\]
+
+<p>We leave further details to this excellent blog <a href="https://danieltakeshi.github.io/2017/04/02/notes-on-the-generalized-advantage-estimation-paper/">post</a> Schulman et al. propose the following <em>generalized advantage estimator</em> (GAE) with parameters \(\gamma,\kappa\) to control the bias-variance tradeoff,</p>
+
+\[\begin{equation}
+\hat{A}^{GAE(\gamma, \kappa)}_{n} := \sum_{n' = 0}^{N-1}(\kappa \gamma)^{n'}\delta_{n+n'},
+\end{equation} \label{eq9}\tag{9}\]
+
+<p>where \(\delta\) is the temporal difference error defined <a href="https://en.wikipedia.org/wiki/Temporal_difference_learning">here</a>. This is an exponentially-weighted average of the TD error where \(\gamma\) determines the scaling of the value function that adds bias when \(\gamma &lt; 1\) and \(\kappa\) that adds bias when \(\kappa &lt;1\) if the value function is inaccurate <a class="citation" href="#schulman2015high">(Schulman et al., 2015)</a>. This leaves the final policy gradient used in our algorithm as,</p>
+
+\[\begin{equation}
+\nabla_{\theta}J(\pi_{\theta}) = \mathbb{E}_{H}[\sum_{n=0}^{N-1}\nabla_{\theta}\text{log }\pi_{\theta}(a_{n} \vert h_{n})\hat{A}^{GAE(\gamma, \kappa)}_{n}].
+\end{equation}\label{eq10}\tag{10}\]
+
+<p>The value function parameters are updated with stochastic gradient descent on the mean square error loss between the value function estimate and the empirical returns,</p>
+
+\[\begin{equation}
+\phi_{k} = \text{argmin}_{\phi} \mathbb{E}_{h_{n}, \hat{R}_{n}}[(V_{\phi}(h_{n}) - \hat{R}_{n})^{2}].
+\end{equation}\label{eq11}\tag{11}.\]
+
+<p>Finally, we are ready to discuss PPO.</p>
+<h3 id="ppo">PPO</h3>
+<p>A common issue in policy gradient methods is the divergence or collapse of policy performance after a parameter update step. This can prevent the policy from ever converging to the desired behavior or result in high sample inefficiency as the policy rectifies the performance decrease. Schulman et al. proposed the PPO algorithm as a principled optimization procedure to ensure that each parameter update stays within a trust-region of the previous parameter iterate <a class="citation" href="#schulman2017proximal">(Schulman et al., 2017)</a>. We chose to use the PPO-Clip implementation of the trust-region because of the strong performance across a variety of tasks, stability and ease of hyperparameter tuning as referenced in <a class="citation" href="#schulman2017proximal">(Schulman et al., 2017)</a> and <a class="citation" href="#andrychowicz2020matters">(Andrychowicz et al., 2020)</a>. The PPO-Clip objective is formulated as,</p>
+
+\[\begin{equation}
+\mathcal{L}_{\text{clip}}(\theta_{k+1},\theta_{k},\rho) = \mathbb{E}_{H}[\mathbb{E}_{n}[\text{min}(g_{n}(\theta_{k+1},\theta_{k}) \hat{A}_{n}, \text{clip}(g_{n}(\theta_{k+1},\theta_{k}) ,1-\epsilon,1+\epsilon)\hat{A}_{n})]],
+\end{equation}\label{eq12}\tag{12}\]
+
+<p>where \(k\) denotes the epoch index and \(\rho\) is implicit in the hidden state. Here, \(g_{n}(\theta_{k+1},\theta_{k}) = \frac{\pi_{\theta_{k+1}}(a_{n+1} \vert h_{n})}{\pi_{\theta_{k}}(a_{n+1} \vert h_{n})}\), denotes the probability ratio of the previous policy iterate to the proposed policy iterate and \(\epsilon\) is the clipping parameter that enforces a hard bound on how much the latest policy iterate can change in probability space reducing the chance of a detrimental policy update. A further regularization trick is early-stopping based on the approximate Kullback-Leibler divergence. The approximate Kullback-Leibler divergence is a measure of the difference between two probability distributions and the approximation is the inverse of \(g_{n}(\theta_{k+1},\theta_{k})\) in log space. If the approximate Kullback-Leibler divergence between the current and previous iterate over a batch of histories exceeds a user-defined threshold, then the parameter updates over that batch of histories are skipped. OpenAI has an excellent blog <a href="https://spinningup.openai.com/en/latest/algorithms/ppo.html">post</a> on this topic.</p>
+
+<p>The total loss is then defined as</p>
+
+\[\begin{equation}
+\mathcal{L}_{\text{total}}(\theta_{k+1},\theta_{k},\phi,\rho) = -\mathcal{L}_{\text{clip}} + c*\mathcal{L}_{\text{val}},
+\end{equation}\label{eq13}\tag{13}\]
+
+<p>where \(c\) is a weighting parameter and \(\mathcal{L}_{\text{val}}\) is the value function loss. Gradient ascent is performed on this loss to find the set of network parameters that maximize the expected episode cumulative reward. In our work, we plotted the number of completed episodes and completed episode length as performance metrics.</p>
+
+<div class="figure">
+    <img src="/assets/img/rad-post/seed_plot_done.jpg" style="width: 48%; display: inline-block; margin: 0 auto;" />
+    <img src="/assets/img/rad-post/seed_plot_len.jpg" style="width: 49%; display: inline-block; margin: 0 auto;" />
+    <div class="caption">
+        <span class="caption-label">Figure 2.</span> Performance curves during the training process over eight random seeds. The left plot shows the number of completed episodes and the right plot shows the episode length averaged over the 10 parallelized environments per epoch. The dark blue line represents the smoothed mean and the shaded region represents the smoothed \(10^{th}\) and \(90^{th}\) percentiles over the eight random seeds. Episode length decreases and number of completed episodes increases as the model converges to a useful policy. Training for more than 3000 epochs did not significantly improve performance.
+    </div>
+</div>
+
+<h2 id="conclusion">Conclusion</h2>
+<p>This post introduced concepts of reinforcement learning that are fundamental to our approach in solving the radiation source search problem. The key goal of reinforcement learning is learning a policy that maximizes the cumulative episode reward for a given task and environment through trial and error. Radiation source search is framed as a POMDP because the agent only receives noisy observations of the state and thus the agent requires “memory” (hidden state) to be successful. A fundamental component of learning is the value function that provides a measure of the value of hidden states in the environment and thereby enables a principled approach to policy development. By parameterizing the value function and policy with neural network, the reinforcement learning problem can be solved from the optimization perspective, which leads to the A2C architecture. PPO is a further development of the A2C that utilizes a trust region to prevent divergent policy parameter updates. The next post will cover the implementation details the neural network architecture and show some performance results.</p>
+
+<ol class="bibliography"><li><span id="sutton2018rl">Sutton, R. S., &amp; Barto, A. G. (2018). <i>Reinforcement learning: An introduction</i>. MIT Press.</span></li>
+<li><span id="spaan2012partially">Spaan, M. T. J. (2012). Partially observable Markov decision processes. In <i>Reinforcement Learning</i> (pp. 387–414). Springer.</span></li>
+<li><span id="wierstra2010recurrent">Wierstra, D., Förster, A., Peters, J., &amp; Schmidhuber, J. (2010). Recurrent policy gradients. <i>Logic Journal of the IGPL</i>, <i>18</i>(5), 620–634.</span></li>
+<li><span id="williams1992simple">Williams, R. J. (1992). Simple statistical gradient-following algorithms for connectionist reinforcement learning. <i>Machine Learning</i>, <i>8</i>(3-4), 229–256.</span></li>
+<li><span id="schulman2015high">Schulman, J., Moritz, P., Levine, S., Jordan, M., &amp; Abbeel, P. (2015). High-dimensional continuous control using generalized advantage estimation. <i>ArXiv Preprint ArXiv:1506.02438</i>.</span></li>
+<li><span id="schulman2017proximal">Schulman, J., Wolski, F., Dhariwal, P., Radford, A., &amp; Klimov, O. (2017). Proximal policy optimization algorithms. <i>ArXiv Preprint ArXiv:1707.06347</i>.</span></li>
+<li><span id="andrychowicz2020matters">Andrychowicz, M., Raichuk, A., Stańczyk, P., Orsini, M., Girgin, S., Marinier, R., Hussenot, L., Geist, M., Pietquin, O., Michalski, M., &amp; others. (2020). What matters in on-policy reinforcement learning? A large-scale empirical study. <i>ArXiv Preprint ArXiv:2006.05990</i>.</span></li></ol>
+
+      </article>
+
+      
+
+      
+
+      
+        <!-- Check if any share-links are active -->
+
+
+
+
+<section id = "social-share-section">
+  <span class="sr-only">Share: </span>
+
+  
+    <a href="https://twitter.com/intent/tweet?text=A+Brief+Overview+of+On-policy+Reinforcement+Learning+Theory&url=%2F2021-09-15-on-policy-theory%2F"
+      class="btn btn-social-icon btn-twitter" title="Share on Twitter">
+      <span class="fab fa-fw fa-twitter" aria-hidden="true"></span>
+      <span class="sr-only">Twitter</span>
+    </a>
+  
+
+  
+    <a href="https://www.facebook.com/sharer/sharer.php?u=%2F2021-09-15-on-policy-theory%2F"
+      class="btn btn-social-icon btn-facebook" title="Share on Facebook">
+      <span class="fab fa-fw fa-facebook" aria-hidden="true"></span>
+      <span class="sr-only">Facebook</span>
+    </a>
+  
+
+  
+    <a href="https://www.linkedin.com/shareArticle?mini=true&url=%2F2021-09-15-on-policy-theory%2F"
+      class="btn btn-social-icon btn-linkedin" title="Share on LinkedIn">
+      <span class="fab fa-fw fa-linkedin" aria-hidden="true"></span>
+      <span class="sr-only">LinkedIn</span>
+    </a>
+  
+
+  
+
+  
+
+</section>
+
+
+
+      
+
+      <ul class="pagination blog-pager">
+        
+        <li class="page-item previous">
+          <a class="page-link" href="/2021-09-12-gym-rad-search/" data-toggle="tooltip" data-placement="top" title="Radiation Source Search Gym Environment">&larr; Previous Post</a>
+        </li>
+        
+        
+      </ul>
+      
+  <div class="disqus-comments">
+  <div class="comments">
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+	  var disqus_shortname = 'peproctor';
+	  /* ensure that pages with query string get the same discussion */
+	  var url_parts = window.location.href.split("?");
+	  var disqus_url = url_parts[0];
+	  (function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	  })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</div>
+  
+  
+
+  
+
+
+
+
+    </div>
+  </div>
+</div>
+
+
+  <footer>
+  <div class="container-md beautiful-jekyll-footer">
+    <div class="row">
+      <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1">
+      <ul class="list-inline text-center footer-links"><li class="list-inline-item">
+    <a href="mailto:proctor.philippe@gmail.com" title="Email me">
+      <span class="fa-stack fa-lg" aria-hidden="true">
+        <i class="fas fa-circle fa-stack-2x"></i>
+        <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+      </span>
+      <span class="sr-only">Email me</span>
+   </a>
+  </li><li class="list-inline-item">
+    <a href="https://github.com/peproctor" title="GitHub">
+      <span class="fa-stack fa-lg" aria-hidden="true">
+        <i class="fas fa-circle fa-stack-2x"></i>
+        <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+      </span>
+      <span class="sr-only">GitHub</span>
+   </a>
+  </li><li class="list-inline-item">
+    <a href="https://linkedin.com/in/peproctor" title="LinkedIn">
+      <span class="fa-stack fa-lg" aria-hidden="true">
+        <i class="fas fa-circle fa-stack-2x"></i>
+        <i class="fab fa-linkedin fa-stack-1x fa-inverse"></i>
+      </span>
+      <span class="sr-only">LinkedIn</span>
+   </a>
+  </li></ul>
+
+      
+      <p class="copyright text-muted">
+      
+        Philippe Proctor
+        &nbsp;&bull;&nbsp;
+      
+      2021
+
+      
+        &nbsp;&bull;&nbsp;
+        <span class="author-site">
+          <a href="">peproctor.github.io</a>
+        </span>
+      
+
+      
+      </p>
+      <p class="theme-by text-muted">
+        Powered by
+        <a href="https://beautifuljekyll.com">Beautiful Jekyll</a>
+      </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+  
+  
+    
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
+
+
+  
+    
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+
+
+  
+    
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+
+  
+
+
+
+  
+    <!-- doing something a bit funky here because I want to be careful not to include JQuery twice! -->
+    
+      <script src="/assets/js/beautifuljekyll.js"></script>
+    
+  
+
+
+
+
+
+  
+    
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+  
+
+
+
+
+
+</body>
+</html>

@@ -10,10 +10,21 @@
     
     
       <item>
+        <title>A Brief Overview of On-policy Reinforcement Learning Theory</title>
+        <description>
+          
+          This is the second in a series of posts detailing the application of deep reinforcement learning to radiation source search. In this post, we will cover the theory and basics of reinforcement learning, on-policy deep reinforcement learning, the advantage actor critic, and proximal policy optimization. This post will be heavy...
+        </description>
+        <pubDate>Wed, 15 Sep 2021 00:00:00 -0400</pubDate>
+        <link>/2021-09-15-on-policy-theory/</link>
+        <guid isPermaLink="true">/2021-09-15-on-policy-theory/</guid>
+      </item>
+    
+      <item>
         <title>Radiation Source Search Gym Environment</title>
         <description>
           
-          This is the first in a series of posts detailing the application of deep reinforcement learning to radiation source search. Context The advancement of nuclear technology has brought the benefits of energy production and medical applications, but also the risks associated with exposure to radiation (Sieminski, 2014). Radioactive materials can...
+          This is the first in a series of posts detailing the application of deep reinforcement learning to radiation source search. In this post, we will cover the basics of the nuclear source search task and how we modeled our reinforcement learning environment. Context The advancement of nuclear technology has brought...
         </description>
         <pubDate>Sun, 12 Sep 2021 00:00:00 -0400</pubDate>
         <link>/2021-09-12-gym-rad-search/</link>
